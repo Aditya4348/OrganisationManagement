@@ -36,7 +36,11 @@ export interface User {
     name: string;
     email: string;
     avatar?: string;
-    role: string;
+    gender?: 'Male' | 'Female';
+    phone_number?: string;
+    address?: string;
+    membership_status?: 'active' | 'inactive';
+    join_date?: string;
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
