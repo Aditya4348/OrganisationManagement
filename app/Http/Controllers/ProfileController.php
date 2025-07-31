@@ -29,6 +29,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        try {
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -37,7 +38,13 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        \Log::info('Profil berhasil diperbarui:', $request->user()->toArray());
+
         return Redirect::route('profile.edit');
+    } catch (\Throwable $e) {
+        \Log::error('Gagal update profile: ' . $e->getMessage());
+        throw $e; // biar error tetap muncul di browser juga
+    }
     }
 
     /**

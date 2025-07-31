@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import { Badge } from "@/Components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { Textarea } from "@/Components/ui/textarea";
@@ -21,7 +20,9 @@ import { Separator } from "@/Components/ui/separator";
 import { BreadcrumbItem, PageProps, sharedData } from "@/types";
 import DashboardLayout from "../../Layouts/DashboardLayout";
 import { useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { usePage, router, useForm } from "@inertiajs/react";
+import { route } from "ziggy-js";
+import { get } from "http";
 
 export default function PageProfile({
     mustVerifyEmail,
@@ -38,25 +39,31 @@ export default function PageProfile({
         },
     ];
     const [isEditing, setIsEditing] = useState(false);
-    const { auth, setAuth } = usePage<sharedData>().props;
-    const [editableAuth, setEditableAuth] = useState(auth);
+    const { auth } = usePage<sharedData>().props;
 
-    const handleInputChange = (field: string, value: string) => {
-        setEditableAuth((prev) => ({
-            ...prev,
-            [field]: value,
-        }));
+    const { data, setData, patch, processing, errors, reset } = useForm({
+        name: auth.user.name || "",
+        email: auth.user.email || "",
+        gender: auth.user.gender || "",
+        phone_number: auth.user.phone_number || "",
+        address: auth.user.address || "",
+        join_date: auth.user.join_date || "",
+        membership_status: auth.user.membership_status || "",
+    });
+
+    const updateUserField = (field: keyof typeof data, value: string) => {
+        setData(field, value);
     };
 
-    const handleSave = () => {
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
         setIsEditing(false);
-        // Here you would typically save to a database
-        console.log("Profile saved:", auth);
+        patch(route("profile.update"));
     };
 
     const handleCancel = () => {
         setIsEditing(false);
-        // Reset to original data if needed
+        reset();
     };
 
     return (
@@ -71,256 +78,276 @@ export default function PageProfile({
                         <p className="text-gray-600 mt-2">
                             Manage your personal information and preferences
                         </p>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsEditing(true)}
+                            className="flex items-center gap-2"
+                        >
+                            <Edit3 className="h-4 w-4" />
+                            Edit Profile
+                        </Button>
                     </div>
 
                     {/* Main Profile Card */}
-                    <Card className="mb-6">
-                        <CardHeader className="pb-6">
-                            <div className="flex items-center justify-between">
-                                <CardTitle className="text-xl">
-                                    Personal Information
-                                </CardTitle>
-                                {!isEditing ? (
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setIsEditing(true)}
-                                        className="flex items-center gap-2"
-                                    >
-                                        <Edit3 className="h-4 w-4" />
-                                        Edit Profile
-                                    </Button>
-                                ) : (
-                                    <div className="flex gap-2">
-                                        <Button
-                                            size="sm"
-                                            onClick={handleSave}
-                                            className="flex items-center gap-2"
-                                        >
-                                            <Save className="h-4 w-4" />
-                                            Save
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={handleCancel}
-                                            className="flex items-center gap-2 bg-transparent"
-                                        >
-                                            <X className="h-4 w-4" />
-                                            Cancel
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="flex flex-col md:flex-row gap-8">
-                                {/* Avatar Section */}
-                                <div className="flex flex-col items-center space-y-4">
-                                    <div className="relative">
-                                        <Avatar className="h-32 w-32">
-                                            <AvatarImage
-                                                src={
-                                                    auth.user.avatar ||
-                                                    "/placeholder.svg"
-                                                }
-                                                alt={auth.user.name}
-                                            />
-                                            <AvatarFallback className="text-2xl">
-                                                {auth.user.name
-                                                    .split(" ")
-                                                    .map((n) => n[0])
-                                                    .join("")}
-                                            </AvatarFallback>
-                                        </Avatar>
-                                        {isEditing && (
+                    <form onSubmit={handleSubmit}>
+                        <Card className="mb-6">
+                            <CardHeader className="pb-6">
+                                <div className="flex items-center justify-between">
+                                    <CardTitle className="text-xl">
+                                        Personal Information
+                                    </CardTitle>
+                                    {!isEditing ? (
+                                        <div></div>
+                                    ) : (
+                                        <div className="flex gap-2">
                                             <Button
                                                 size="sm"
-                                                variant="secondary"
-                                                className="absolute -bottom-2 -right-2 rounded-full h-8 w-8 p-0"
+                                                type="submit"
+                                                disabled={processing}
+                                                className="flex items-center gap-2"
                                             >
-                                                <Camera className="h-4 w-4" />
+                                                <Save className="h-4 w-4" />
+                                                Save
                                             </Button>
-                                        )}
-                                    </div>
-                                    <div className="text-center">
-                                        <h2 className="text-xl font-semibold">
-                                            {auth.user.name}
-                                        </h2>
-                                        <p className="text-gray-600">
-                                            Position
-                                        </p>
-                                    </div>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={handleCancel}
+                                                className="flex items-center gap-2 bg-transparent"
+                                            >
+                                                <X className="h-4 w-4" />
+                                                Cancel
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
-
-                                {/* Profile Details */}
-                                <div className="flex-1 space-y-6">
-                                    {/* Basic Information */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="name">
-                                                Full Name
-                                            </Label>
-                                            {isEditing ? (
-                                                <Input
-                                                    id="name"
-                                                    value={auth.user.name}
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            "name",
-                                                            e.target.value
-                                                        )
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex flex-col md:flex-row gap-8">
+                                    {/* Avatar Section */}
+                                    <div className="flex flex-col items-center space-y-4">
+                                        <div className="relative">
+                                            <Avatar className="h-32 w-32">
+                                                <AvatarImage
+                                                    src={
+                                                        auth.user.avatar ||
+                                                        "/placeholder.svg"
                                                     }
+                                                    alt={data.name}
                                                 />
-                                            ) : (
-                                                <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
-                                                    <User className="h-4 w-4 text-gray-500" />
-                                                    <span>
-                                                        {auth.user.name}
-                                                    </span>
-                                                </div>
+                                                <AvatarFallback className="text-2xl">
+                                                    {data.name
+                                                        .split(" ")
+                                                        .map((n) => n[0])
+                                                        .join("")}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            {isEditing && (
+                                                <Button
+                                                    size="sm"
+                                                    variant="secondary"
+                                                    className="absolute -bottom-2 -right-2 rounded-full h-8 w-8 p-0"
+                                                >
+                                                    <Camera className="h-4 w-4" />
+                                                </Button>
                                             )}
                                         </div>
-
-                                        <div className="space-y-2">
-                                            <Label htmlFor="position">
+                                        <div className="text-center">
+                                            <h2 className="text-xl font-semibold">
+                                                {auth.user.name}
+                                            </h2>
+                                            <p className="text-gray-600">
                                                 Position
-                                            </Label>
-                                            {isEditing ? (
-                                                <Input
-                                                    id="position"
-                                                    value="position"
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            "position",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Profile Details */}
+                                    <div className="flex-1 space-y-6">
+                                        {/* Basic Information */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="name">
+                                                    Full Name
+                                                </Label>
+                                                {isEditing ? (
+                                                    <Input
+                                                        id="name"
+                                                        name="name"
+                                                        type="text"
+                                                        value={data.name}
+                                                        onChange={(e) =>
+                                                            updateUserField(
+                                                                "name",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                                        <User className="h-4 w-4 text-gray-500" />
+                                                        <span>{data.name}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label htmlFor="position">
+                                                    Status
+                                                </Label>
                                                 <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
                                                     <Briefcase className="h-4 w-4 text-gray-500" />
-                                                    <span>Position</span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label htmlFor="email">Email</Label>
-                                            {isEditing ? (
-                                                <Input
-                                                    id="email"
-                                                    type="email"
-                                                    value={auth.user.email}
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            "email",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
-                                                <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
-                                                    <Mail className="h-4 w-4 text-gray-500" />
                                                     <span>
-                                                        {auth.user.email}
+                                                        {data.membership_status}
                                                     </span>
                                                 </div>
-                                            )}
-                                        </div>
+                                            </div>
 
-                                        <div className="space-y-2">
-                                            <Label htmlFor="phone">Phone</Label>
-                                            {isEditing ? (
-                                                <Input
-                                                    id="phone"
-                                                    value={
-                                                        auth.user.phone_number
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            "phone",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="email">
+                                                    Email
+                                                </Label>
+                                                {isEditing ? (
+                                                    <Input
+                                                        id="email"
+                                                        name="email"
+                                                        type="email"
+                                                        value={data.email}
+                                                        onChange={(e) =>
+                                                            updateUserField(
+                                                                "email",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                                        <Mail className="h-4 w-4 text-gray-500" />
+                                                        <span>
+                                                            {data.email}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label htmlFor="phone">
+                                                    Phone
+                                                </Label>
+                                                {isEditing ? (
+                                                    <Input
+                                                        id="phone_number"
+                                                        name="phone_number"
+                                                        type="number"
+                                                        value={
+                                                            data.phone_number
+                                                        }
+                                                        onChange={(e) =>
+                                                            updateUserField(
+                                                                "phone_number",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                                        <Phone className="h-4 w-4 text-gray-500" />
+                                                        <span>
+                                                            {data.phone_number}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label htmlFor="location">
+                                                    Location
+                                                </Label>
+                                                {isEditing ? (
+                                                    <Input
+                                                        id="address"
+                                                        name="address"
+                                                        type="text"
+                                                        value={data.address}
+                                                        onChange={(e) =>
+                                                            updateUserField(
+                                                                "address",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                ) : (
+                                                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                                        <MapPin className="h-4 w-4 text-gray-500" />
+                                                        <span>
+                                                            {data.address}
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Join Date</Label>
                                                 <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
-                                                    <Phone className="h-4 w-4 text-gray-500" />
-                                                    <span>
-                                                        {auth.user.phone_number}
-                                                    </span>
+                                                    {isEditing ? (
+                                                        <Input
+                                                            type="date"
+                                                            name="join_date"
+                                                            value={
+                                                                data.join_date
+                                                            }
+                                                            onChange={(e) =>
+                                                                updateUserField(
+                                                                    "join_date",
+                                                                    e.target
+                                                                        .value
+                                                                )
+                                                            }
+                                                        />
+                                                    ) : (
+                                                        <div className="flex items-center gap-2">
+                                                            <Calendar className="h-4 w-4 text-gray-500" />
+                                                            <span>
+                                                                {data.join_date}
+                                                            </span>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label htmlFor="location">
-                                                Location
-                                            </Label>
-                                            {isEditing ? (
-                                                <Input
-                                                    id="location"
-                                                    value={auth.user.address}
-                                                    onChange={(e) =>
-                                                        handleInputChange(
-                                                            "location",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            ) : (
-                                                <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
-                                                    <MapPin className="h-4 w-4 text-gray-500" />
-                                                    <span>
-                                                        {auth.user.address}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <Label>Join Date</Label>
-                                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
-                                                <Calendar className="h-4 w-4 text-gray-500" />
-                                                <span>
-                                                    {auth.user.join_date}
-                                                </span>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <Separator />
+                                        <Separator />
 
-                                    {/* Bio Section */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="bio">Bio</Label>
-                                        {isEditing ? (
-                                            <Textarea
-                                                id="bio"
-                                                value="belum ada Bio"
-                                                onChange={(e) =>
-                                                    handleInputChange(
-                                                        "bio",
-                                                        e.target.value
-                                                    )
-                                                }
-                                                rows={4}
-                                                placeholder="Tell us about yourself..."
-                                            />
-                                        ) : (
-                                            <div className="p-3 bg-gray-50 rounded-md">
-                                                <p className="text-gray-700">
-                                                    belum ada Bio
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
+                                        {/* Bio Section */}
+                                        {/* <div className="space-y-2">
+                                            <Label htmlFor="bio">Bio</Label>
+                                            {isEditing ? (
+                                                <Textarea
+                                                    id="bio"
+                                                    value="belum ada Bio"
+                                                    onChange={(e) =>
+                                                        updateUserField(
+                                                            "bio",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    rows={4}
+                                                    placeholder="Tell us about yourself..."
+                                                />
+                                            ) : (
+                                                <div className="p-3 bg-gray-50 rounded-md">
+                                                    <p className="text-gray-700">
+                                                        belum ada Bio
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div> */}
 
-                                    <Separator />
+                                        <Separator />
 
-                                    {/* Skills Section */}
-                                    {/* <div className="space-y-3">
+                                        {/* Skills Section */}
+                                        {/* <div className="space-y-3">
                                         <Label>Skills</Label>
                                         <div className="flex flex-wrap gap-2">
                                             {profileData.skills.map(
@@ -345,11 +372,11 @@ export default function PageProfile({
                                             )}
                                         </div>
                                     </div> */}
+                                    </div>
                                 </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
+                            </CardContent>
+                        </Card>
+                    </form>
                     {/* Additional Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Activity Card */}
