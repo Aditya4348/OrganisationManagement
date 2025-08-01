@@ -1,8 +1,14 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
+export interface Role {
+    id: number;
+    name: string;
+}
+
 export interface Auth {
     user: User;
+    roles: string[];
 }
 
 export interface BreadcrumbItem {
@@ -24,6 +30,7 @@ export interface NavItem {
 
 export interface sharedData {
     user: User;
+    roles: string[];
     quote: { message: string; author: string };
     auth: Auth;
     ziggy: Config & { location: string };

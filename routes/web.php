@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Laravel\Pail\ValueObjects\Origin\Console;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -16,6 +18,6 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified', 'role:super admin'])->name('dashboard');
 
 require __DIR__.'/auth.php';

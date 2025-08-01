@@ -35,7 +35,7 @@ class permissionRole extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        $superAdmin = Role::firstOrCreate(['name' => 'super admin']);
+        $superAdmin = Role::firstOrCreate(['name' => 'superAdmin']);
         $admin = Role::firstOrCreate(['name' => 'admin']);
         $sekretaris = Role::firstOrCreate(['name' => 'sekretaris']);
         $bendahara = Role::firstOrCreate(['name' => 'bendahara']);

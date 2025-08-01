@@ -10,20 +10,17 @@ import {
     Save,
     X,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/Components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { Textarea } from "@/Components/ui/textarea";
 import { Separator } from "@/Components/ui/separator";
 import { BreadcrumbItem, PageProps, sharedData } from "@/types";
 import DashboardLayout from "../../Layouts/DashboardLayout";
 import { FormEventHandler, useRef, useState } from "react";
 import { usePage, router, useForm } from "@inertiajs/react";
 import { route } from "ziggy-js";
-import { get } from "http";
-import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
 import { Toaster, toast } from "react-hot-toast";
 
 export default function PageProfile({
@@ -53,7 +50,6 @@ export default function PageProfile({
         processing,
         errors,
         reset,
-        recentlySuccessful,
     } = useForm({
         name: auth.user.name || "",
         email: auth.user.email || "",

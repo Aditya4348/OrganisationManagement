@@ -12,7 +12,7 @@ class GlobalSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(DatabaseSeeder::class);
         $this->call(PermissionRole::class);
+        $this->call(DatabaseSeeder::class);
     }
 }
