@@ -9,6 +9,7 @@ import { BreadcrumbItem as BreadcrumbItemType } from "@/types";
 import { Head } from "@inertiajs/react";
 
 
+
 const DashboardLayout = ({
   children,
   className,

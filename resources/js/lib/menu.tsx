@@ -21,57 +21,47 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Oragnisations",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
+      plan: "Sekretaris",
     },
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Home",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "Manage Users",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Activity Users",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Sekretariat",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
+          title: "Manage Agenda",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Manage Documents",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Create Report",
           url: "#",
         },
       ],

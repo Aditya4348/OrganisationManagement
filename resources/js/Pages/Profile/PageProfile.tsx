@@ -19,10 +19,12 @@ import { Textarea } from "@/Components/ui/textarea";
 import { Separator } from "@/Components/ui/separator";
 import { BreadcrumbItem, PageProps, sharedData } from "@/types";
 import DashboardLayout from "../../Layouts/DashboardLayout";
-import { useState } from "react";
+import { FormEventHandler, useRef, useState } from "react";
 import { usePage, router, useForm } from "@inertiajs/react";
 import { route } from "ziggy-js";
 import { get } from "http";
+import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
+import { Toaster, toast } from "react-hot-toast";
 
 export default function PageProfile({
     mustVerifyEmail,
@@ -40,8 +42,19 @@ export default function PageProfile({
     ];
     const [isEditing, setIsEditing] = useState(false);
     const { auth } = usePage<sharedData>().props;
+    const currentPassword = useRef<HTMLInputElement>(null);
+    const password = useRef<HTMLInputElement>(null);
 
-    const { data, setData, patch, processing, errors, reset } = useForm({
+    const {
+        data,
+        setData,
+        patch,
+        put,
+        processing,
+        errors,
+        reset,
+        recentlySuccessful,
+    } = useForm({
         name: auth.user.name || "",
         email: auth.user.email || "",
         gender: auth.user.gender || "",
@@ -49,7 +62,40 @@ export default function PageProfile({
         address: auth.user.address || "",
         join_date: auth.user.join_date || "",
         membership_status: auth.user.membership_status || "",
+        current_password: "",
+        password_confirmation: "",
+        password: "",
     });
+
+    const handleSubmitUpdatePassword: FormEventHandler = (e) => {
+        e.preventDefault();
+
+        // Validasi awal di sisi frontend
+        if (data.password !== data.password_confirmation) {
+            alert("Password baru dan konfirmasi password tidak cocok.");
+            return;
+        }
+
+        put(route("password.update"), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast.success("Password berhasil diperbarui.");
+                reset();
+            },
+            onError: (errors) => {
+                toast.error("Gagal memperbarui password:", errors);
+                if (errors.current_password) {
+                    reset("current_password");
+                    currentPassword.current?.focus();
+                }
+
+                if (errors.password || errors.password_confirmation) {
+                    reset("password", "password_confirmation");
+                    password.current?.focus();
+                }
+            },
+        });
+    };
 
     const updateUserField = (field: keyof typeof data, value: string) => {
         setData(field, value);
@@ -78,6 +124,14 @@ export default function PageProfile({
                         <p className="text-gray-600 mt-2">
                             Manage your personal information and preferences
                         </p>
+                        <Toaster
+                            {...({
+                                position: "top-right",
+                                toastOptions: {
+                                    duration: 3000,
+                                },
+                            } as any)}
+                        />
                         <Button
                             variant="outline"
                             size="sm"
@@ -97,9 +151,7 @@ export default function PageProfile({
                                     <CardTitle className="text-xl">
                                         Personal Information
                                     </CardTitle>
-                                    {!isEditing ? (
-                                        <div></div>
-                                    ) : (
+                                    {!isEditing ? null : (
                                         <div className="flex gap-2">
                                             <Button
                                                 size="sm"
@@ -383,81 +435,121 @@ export default function PageProfile({
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg">
-                                    Recent Activity
+                                    Change Password
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">
-                                                Profile updated
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                2 hours ago
-                                            </p>
+                                <div className="space-y-10">
+                                    <form onSubmit={handleSubmitUpdatePassword}>
+                                        <div className="space-y-1">
+                                            <Label htmlFor="name">
+                                                Current Password
+                                            </Label>
+                                            <Input
+                                                type="password"
+                                                id="current_password"
+                                                ref={currentPassword}
+                                                value={data.current_password}
+                                                name="current_password"
+                                                onChange={(e) => {
+                                                    setData(
+                                                        "current_password",
+                                                        e.target.value
+                                                    );
+                                                }}
+                                            />
+                                            {errors.current_password && (
+                                                <p className="text-sm text-red-600">
+                                                    {
+                                                        errors.current_password
+                                                    }
+                                                </p>
+                                            )}
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">
-                                                New project assigned
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                1 day ago
-                                            </p>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="name">
+                                                New Password
+                                            </Label>
+                                            <Input
+                                                type="password"
+                                                id="password"
+                                                ref={password}
+                                                value={data.password}
+                                                name="password"
+                                                onChange={(e) => {
+                                                    setData(
+                                                        "password",
+                                                        e.target.value
+                                                    );
+                                                }}
+                                            />
+                                            {errors.password && (
+                                                <p className="text-sm text-red-600">
+                                                    {
+                                                        errors.password
+                                                    }
+                                                </p>
+                                            )}
                                         </div>
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="h-2 w-2 bg-orange-500 rounded-full"></div>
-                                        <div className="flex-1">
-                                            <p className="text-sm font-medium">
-                                                Password changed
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                3 days ago
-                                            </p>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="name">
+                                                Confirm Password
+                                            </Label>
+                                            <Input
+                                                type="password"
+                                                id="password_confirmation"
+                                                ref={password}
+                                                value={data.password_confirmation}
+                                                name="password_confirmation"
+                                                onChange={(e) => {
+                                                    setData(
+                                                        "password_confirmation",
+                                                        e.target.value
+                                                    );
+                                                }}
+                                            />
+                                            {errors.password_confirmation && (
+                                                <p className="text-sm text-red-600">
+                                                    {
+                                                        errors.password_confirmation
+                                                    }
+                                                </p>
+                                            )}
                                         </div>
-                                    </div>
+                                        <Button
+                                            type="submit"
+                                            className="w-full"
+                                        >
+                                            Change Password
+                                        </Button>
+                                    </form>
                                 </div>
                             </CardContent>
                         </Card>
 
-                        {/* Settings Card */}
+                        {/* Remove Account Card */}
                         <Card>
                             <CardHeader>
                                 <CardTitle className="text-lg">
-                                    Quick Settings
+                                    Remove Account
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-3">
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-start bg-transparent"
-                                    >
-                                        Change Password
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="w-full justify-start bg-transparent"
-                                    >
-                                        Privacy Settings
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="w-full justify-start bg-transparent"
-                                    >
-                                        Notification Preferences
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="w-full justify-start text-red-600 hover:text-red-700 bg-transparent"
+                                        className="w-full justify-start text-neutral-300 hover:text-neutral-200 bg-red-600 hover:bg-red-700"
                                     >
                                         Delete Account
                                     </Button>
+                                    <p className="text-red-600 font-medium text-sm">
+                                        Lorem ipsum dolor sit, amet consectetur
+                                        adipisicing elit. Placeat ipsam
+                                        deleniti, blanditiis aut hic optio
+                                        itaque, at natus fugit eligendi maiores
+                                        accusantium nemo odit quasi magni
+                                        commodi. Incidunt, ratione atque.
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>
