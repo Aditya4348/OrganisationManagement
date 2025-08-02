@@ -18,6 +18,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified', 'role:super admin'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
+require __DIR__.'/setting.php';
 require __DIR__.'/auth.php';

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,21 +31,22 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         try {
-        $request->user()->fill($request->validated());
+            \Log::info('Profil berhasil diperbarui:', $request->user()->toArray());
+            
+            $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+            if ($request->user()->isDirty('email')) {
+                $request->user()->email_verified_at = Carbon::now();
+            }
+
+            $request->user()->save();
+
+
+            return Redirect::route('profile.edit');
+        } catch (\Throwable $e) {
+            \Log::error('Gagal update profile: ' . $e->getMessage());
+            throw $e; // biar error tetap muncul di browser juga
         }
-
-        $request->user()->save();
-
-        \Log::info('Profil berhasil diperbarui:', $request->user()->toArray());
-
-        return Redirect::route('profile.edit');
-    } catch (\Throwable $e) {
-        \Log::error('Gagal update profile: ' . $e->getMessage());
-        throw $e; // biar error tetap muncul di browser juga
-    }
     }
 
     /**

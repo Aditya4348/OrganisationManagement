@@ -280,14 +280,14 @@ export default function PageProfile({
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label htmlFor="phone">
+                                                <Label htmlFor="phone_number">
                                                     Phone
                                                 </Label>
                                                 {isEditing ? (
                                                     <Input
                                                         id="phone_number"
                                                         name="phone_number"
-                                                        type="number"
+                                                        type="text"
                                                         value={
                                                             data.phone_number
                                                         }
