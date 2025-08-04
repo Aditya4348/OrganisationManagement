@@ -27,9 +27,6 @@ export function NavUser({
         name: string;
         email: string;
         avatar: string;
-        role: string;
-        email_verified_at: string;
-        created_at: string;
     };
 }) {
     const { isMobile } = useSidebar();

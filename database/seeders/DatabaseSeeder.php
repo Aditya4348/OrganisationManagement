@@ -17,13 +17,13 @@ class DatabaseSeeder extends Seeder
 
         $superAdmin = User::factory()->create([
             'name' => 'User Super Admin',
-            'email' => 'superAdmin@example.com',
+            'email' => 'superadmin@example.com',
         ]);
         $superAdmin->assignRole('superAdmin');
 
         $admin = User::factory()->create([
             'name' => 'User Admin',
-            'email' => 'Admin@example.com',
+            'email' => 'admin@example.com',
         ]);
         $admin->assignRole('admin');
     }

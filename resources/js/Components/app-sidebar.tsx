@@ -3,7 +3,7 @@ import { NavMain } from "@/Components/nav-main";
 import { NavProjects } from "@/Components/nav-projects";
 import { NavUser } from "@/Components/nav-user";
 import { TeamSwitcher } from "@/Components/team-switcher";
-import { data } from "@/lib/menu";
+import UseNavData from "@/lib/UseNavData";
 import {
     Sidebar,
     SidebarContent,
@@ -11,12 +11,9 @@ import {
     SidebarHeader,
     SidebarRail,
 } from "@/Components/ui/sidebar";
-import { usePage } from "@inertiajs/react";
-import { sharedData } from "@/types";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-    const { auth } = usePage<sharedData>().props;
-    const menu = data;
+    const menu = UseNavData();
 
     return (
         <Sidebar collapsible="icon" {...props}>
@@ -30,12 +27,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarFooter>
                 <NavUser
                     user={{
-                        name: auth.user.name,
-                        email: auth.user.email,
-                        avatar: auth.user.avatar || "",
-                        role: "guest", // atau ambil dari tempat lain
-                        email_verified_at: auth.user.email_verified_at ?? "",
-                        created_at: auth.user.created_at,
+                        name: menu.user.name,
+                        email: menu.user.email,
+                        avatar: menu.user.avatar || "",
                     }}
                 />
             </SidebarFooter>
