@@ -33,6 +33,7 @@ export interface sharedData {
     roles: string[];
     quote: { message: string; author: string };
     auth: Auth;
+    flash: { error?: string; succes?: string };
     ziggy: Config & { location: string };
     sidebarOpen: boolean;
     [key: string]: unknown;

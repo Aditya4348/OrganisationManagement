@@ -44,8 +44,8 @@ class ProfileController extends Controller
 
             return Redirect::route('profile.edit');
         } catch (\Throwable $e) {
-            \Log::error('Gagal update profile: ' . $e->getMessage());
-            throw $e; // biar error tetap muncul di browser juga
+            
+            return Redirect::route('profile.edit')->with('error', $e->getMessage());
         }
     }
 
