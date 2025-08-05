@@ -20,6 +20,7 @@ import ProfileUpdate from "./Partials/ProfileUpdate";
 import PasswordUpdate from "./Partials/PasswordUpdate";
 import { useState } from "react";
 import SettingsLayout from "@/Layouts/SettingsLayout";
+import DeleteUserForm from "./Partials/Delete-User";
 
 export default function PageProfile({
     mustVerifyEmail,
@@ -72,31 +73,7 @@ export default function PageProfile({
                     </Card>
 
                     {/* Remove Account Card */}
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-lg">
-                                Remove Account
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-3">
-                                <Button
-                                    variant="outline"
-                                    className="w-full justify-start text-neutral-300 hover:text-neutral-200 bg-red-600 hover:bg-red-700"
-                                >
-                                    Delete Account
-                                </Button>
-                                <p className="text-red-600 font-medium text-sm">
-                                    Lorem ipsum dolor sit, amet consectetur
-                                    adipisicing elit. Placeat ipsam deleniti,
-                                    blanditiis aut hic optio itaque, at natus
-                                    fugit eligendi maiores accusantium nemo odit
-                                    quasi magni commodi. Incidunt, ratione
-                                    atque.
-                                </p>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <DeleteUserForm />
                 </div>
             </SettingsLayout>
         </DashboardLayout>
