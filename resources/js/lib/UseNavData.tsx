@@ -34,7 +34,7 @@ const UseNavData = () => {
                 items: [
                     {
                         title: "Home",
-                        url: "#",
+                        url: '/dashboard',
                     },
                     {
                         title: "Manage Users",
@@ -42,6 +42,10 @@ const UseNavData = () => {
                     },
                     {
                         title: "Activity Users",
+                        url: "#",
+                    },
+                    {
+                        title: "Manage Role",
                         url: "#",
                     },
                 ],

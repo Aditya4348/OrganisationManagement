@@ -148,9 +148,9 @@ const ProfileUpdate = ({
                                             }
                                         />
                                     ) : (
-                                        <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                        <div className="flex items-center gap-2 p-2 rounded-md">
                                             <User className="h-4 w-4 text-gray-500" />
-                                            <span>{data.name}</span>
+                                            {data.name}
                                         </div>
                                     )}
                                     {errors.name && (
@@ -160,7 +160,7 @@ const ProfileUpdate = ({
 
                                 <div className="space-y-2">
                                     <Label htmlFor="position">Status</Label>
-                                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                    <div className="flex items-center gap-2 p-2 rounded-md">
                                         <Briefcase className="h-4 w-4 text-gray-500" />
                                         <span>{data.membership_status}</span>
                                     </div>
@@ -182,7 +182,7 @@ const ProfileUpdate = ({
                                             }
                                         />
                                     ) : (
-                                        <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                        <div className="flex items-center gap-2 p-2 rounded-md">
                                             <Mail className="h-4 w-4 text-gray-500" />
                                             <span>{data.email}</span>
                                         </div>
@@ -205,7 +205,7 @@ const ProfileUpdate = ({
                                             }
                                         />
                                     ) : (
-                                        <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                        <div className="flex items-center gap-2 p-2 rounded-md">
                                             <Phone className="h-4 w-4 text-gray-500" />
                                             <span>{data.phone_number}</span>
                                         </div>
@@ -228,7 +228,7 @@ const ProfileUpdate = ({
                                             }
                                         />
                                     ) : (
-                                        <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                        <div className="flex items-center gap-2 p-2 rounded-md">
                                             <MapPin className="h-4 w-4 text-gray-500" />
                                             <span>{data.address}</span>
                                         </div>
@@ -237,7 +237,7 @@ const ProfileUpdate = ({
 
                                 <div className="space-y-2">
                                     <Label>Join Date</Label>
-                                    <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                                    <div className="flex items-center gap-2 p-2 rounded-md">
                                         {isEditing ? (
                                             <Input
                                                 type="date"
@@ -279,7 +279,7 @@ const ProfileUpdate = ({
                                                     placeholder="Tell us about yourself..."
                                                 />
                                             ) : (
-                                                <div className="p-3 bg-gray-50 rounded-md">
+                                                <div className="p-3 rounded-md">
                                                     <p className="text-gray-700">
                                                         belum ada Bio
                                                     </p>

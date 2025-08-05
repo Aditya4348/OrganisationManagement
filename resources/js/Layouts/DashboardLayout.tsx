@@ -14,7 +14,7 @@ const DashboardLayout = ({
   children,
   className,
   breadcrumbs,
-  title = "Profile",
+  title = "Home",
 }: {
   children: React.ReactNode;
   className?: string;

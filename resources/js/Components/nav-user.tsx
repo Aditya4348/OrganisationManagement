@@ -44,7 +44,6 @@ export function NavUser({
                                 <AvatarImage
                                     src={user.avatar}
                                     alt={user.name}
-                                    
                                 />
                                 <AvatarFallback className="rounded-lg">
                                     CN
@@ -106,8 +105,13 @@ export function NavUser({
 
                         <DropdownMenuGroup>
                             <DropdownMenuItem>
-                                <Settings2 />
-                                Setting
+                                <a
+                                    className="flex items-center gap-2 w-full"
+                                    href= '/appearance'
+                                >
+                                    <Settings2 />
+                                    Setting
+                                </a>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
