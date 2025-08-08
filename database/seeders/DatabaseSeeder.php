@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'User Super Admin',
             'email' => 'superadmin@example.com',
         ]);
-        $superAdmin->assignRole('superAdmin');
+        $superAdmin->assignRole('super_admin');
 
         $admin = User::factory()->create([
             'name' => 'User Admin',

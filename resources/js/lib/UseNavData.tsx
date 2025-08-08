@@ -38,7 +38,7 @@ const UseNavData = () => {
                     },
                     {
                         title: "Manage Users",
-                        url: "#",
+                        url: "/dashboard/member",
                     },
                     {
                         title: "Activity Users",

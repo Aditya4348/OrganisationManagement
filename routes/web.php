@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ViewController;
 use Illuminate\Container\Attributes\Auth;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -20,5 +21,17 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-require __DIR__.'/setting.php';
-require __DIR__.'/auth.php';
+// Route for View Page
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::prefix('dashboard')->group(function () {
+        
+        Route::get('/', [ViewController::class, 'dashboard'])->name('dashboard');
+
+        Route::get('/member', [ViewController::class, 'ListUser'])->name('users.list-student');
+        // Route::get('/siswa/{student}', [ViewController::class, 'DetailStudent'])->name('users.detail-student');
+    });
+});
+
+require __DIR__ . '/setting.php';
+require __DIR__ . '/auth.php';
