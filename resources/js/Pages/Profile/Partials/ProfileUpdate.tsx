@@ -98,7 +98,7 @@ const ProfileUpdate = ({
                                 <Avatar className="h-32 w-32">
                                     <AvatarImage
                                         src={
-                                            auth.user.avatar ||
+                                            data.avatar ||
                                             "/placeholder.svg"
                                         }
                                         alt={data.name}

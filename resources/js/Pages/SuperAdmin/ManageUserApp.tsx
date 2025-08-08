@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { usePage } from "@inertiajs/react";
 import toast, { ToastBar } from "react-hot-toast";
 import { useState } from "react";
+import UserForm from "../FormPage/FormUserApp";
 
 interface PROPS extends PageProps {
         response: {
@@ -55,7 +56,7 @@ const ManageUserApp = ({}) => {
                         <DataTable columns={ColumnUSERS} data={response.data.users} actions={tableActions}/>
                     </TabsContent>
                     <TabsContent value="create-User">
-                        <h1>User Create</h1>
+                        <UserForm />
                     </TabsContent>
                 </Tabs>
 

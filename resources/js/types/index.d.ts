@@ -39,17 +39,18 @@ export interface sharedData {
     [key: string]: unknown;
 }
 
-export interface User {
+export interface User{
     id: number;
     name: string;
     email: string;
-    avatar?: string;
+    avatar?: string | File;
     gender?: 'Male' | 'Female';
     phone_number?: string;
     address?: string;
     membership_status?: 'active' | 'inactive';
     join_date?: string;
     email_verified_at: string | null;
+    password: string;
     created_at: string;
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...

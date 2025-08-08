@@ -1,6 +1,21 @@
 import { sharedData } from "@/types";
 import { useForm, usePage } from "@inertiajs/react";
 
+type FormData = {
+    name: string;
+    email: string;
+    gender: string;
+    phone_number: string;
+    address: string;
+    join_date: string;
+    membership_status: string;
+    current_password: string;
+    password_confirmation: string;
+    password: string;
+    avatar?: string | File;
+    avatar_preview: string;
+};
+
 const UseProfileForm = () => {
     const { auth } = usePage<sharedData>().props;
 
@@ -12,6 +27,8 @@ const UseProfileForm = () => {
             address: auth.user.address || "",
             join_date: auth.user.join_date || "",
             membership_status: auth.user.membership_status || "",
+            avatar: "",
+            avatar_preview: auth.user.avatar || "",
             current_password: "",
             password_confirmation: "",
             password: "",
@@ -20,4 +37,24 @@ const UseProfileForm = () => {
     return form;
 };
 
-export { UseProfileForm };
+const UseCreatedUsers = () => {
+    
+    const form = useForm<FormData>({
+            name: "",
+            email: "",
+            gender: "",
+            phone_number: "",
+            address: "",
+            join_date: "",
+            avatar: "",
+            avatar_preview: "",
+            membership_status: "",
+            current_password: "",
+            password_confirmation: "",
+            password: "",
+    });
+
+    return  form
+}
+
+export { UseProfileForm, UseCreatedUsers};

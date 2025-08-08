@@ -31,17 +31,17 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         try {
-            \Log::info('Profil berhasil diperbarui:', $request->user()->toArray());
             
             $request->user()->fill($request->validated());
-
+            
             if ($request->user()->isDirty('email')) {
                 $request->user()->email_verified_at = Carbon::now();
             }
-
+            
             $request->user()->save();
-
-
+            
+            
+            \Log::info('Profil berhasil diperbarui:', $request->user()->toArray());
             return Redirect::route('profile.edit');
         } catch (\Throwable $e) {
             

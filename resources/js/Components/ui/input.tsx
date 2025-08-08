@@ -1,6 +1,8 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { Label } from "@radix-ui/react-label"
+import InputError from "../InputError"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -17,6 +19,25 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
     )
   }
 )
-Input.displayName = "Input"
 
-export { Input }
+type InputGroupProps = {
+  id: string;
+  label: string;
+  type: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  placeholder?: string;
+  name?: string;
+};
+
+const InputGroup = ({ id, label, type, value, name, onChange, error, placeholder }: InputGroupProps) => (
+  <div>
+    <Label htmlFor={id}>{label}</Label>
+    <Input id={id} type={type} value={value} name={name} onChange={onChange} placeholder={placeholder} />
+    <InputError message={error} />
+  </div>
+);
+
+
+export { Input, InputGroup}
