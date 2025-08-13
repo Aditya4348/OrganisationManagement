@@ -1,25 +1,28 @@
 import DashboardLayout from "@/Layouts/DashboardLayout";
-import { BreadcrumbItem, PageProps } from "@/types";
+import { BreadcrumbItem, PageProps, Role } from "@/types";
 import { DataTable } from "@/Components/ui/table";
-import { ColumnUSERS, USERS } from '@/types/columns';
+import { ColumnUSERS, USERS } from "@/types/columns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import toast, { ToastBar } from "react-hot-toast";
 import { useState } from "react";
 import UserForm from "../FormPage/FormUserApp";
 
 interface PROPS extends PageProps {
-        response: {
-            message: string;
-            count: number;
-            data: {
-                users: USERS[];
-            };
+    response: {
+        message: string;
+        count: number;
+        roles: Role[];
+        data: {
+            users: USERS[];
         };
     };
+}
 
 const ManageUserApp = ({}) => {
-    const { auth, response } = usePage<PROPS>().props;
+    const { response } = usePage<PROPS>().props;
+    console.log(response.roles ?? 'Roles belum dikirim');
+
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
     const Breadcrumbs: BreadcrumbItem[] = [
@@ -34,11 +37,16 @@ const ManageUserApp = ({}) => {
     ];
 
     const tableActions = {
-        export: () => { toast('Tunggu sebentar, sedang mengunduh...'); window.location.href = route('student.export') },
-        exportTemplate: () => { toast('Tunggu sebentar, sedang mengunduh...'); window.location.href = route('student.export-template') },
+        export: () => {
+            toast("Tunggu sebentar, sedang mengunduh...");
+            window.location.href = route("student.export");
+        },
+        exportTemplate: () => {
+            toast("Tunggu sebentar, sedang mengunduh...");
+            window.location.href = route("student.export-template");
+        },
         import: () => setIsDialogOpen(true),
     };
-
 
     return (
         <DashboardLayout breadcrumbs={Breadcrumbs} title="Manage Users">
@@ -53,10 +61,14 @@ const ManageUserApp = ({}) => {
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent value="list-User">
-                        <DataTable columns={ColumnUSERS} data={response.data.users} actions={tableActions}/>
+                        <DataTable
+                            columns={ColumnUSERS}
+                            data={response.data.users}
+                            actions={tableActions}
+                        />
                     </TabsContent>
                     <TabsContent value="create-User">
-                        <UserForm />
+                        <UserForm Roles={response.roles} />
                     </TabsContent>
                 </Tabs>
 

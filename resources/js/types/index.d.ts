@@ -4,6 +4,7 @@ import type { Config } from 'ziggy-js';
 export interface Role {
     id: number;
     name: string;
+    guard_name: string;
 }
 
 export interface Auth {

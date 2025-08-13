@@ -11,22 +11,6 @@ use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $role = Role::all();
-        return Inertia::render('',[]);
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -39,6 +23,7 @@ class UserController extends Controller
                 'email' => 'required|string|email|max:255|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'gender' => 'required|in:male,female',
+                'join_date' => 'required|date',
                 'phone_number' => 'required|string|max:255',
                 'address' => 'required|string|max:255',
                 'membership_status' => 'required|in:active,inactive',
@@ -55,6 +40,7 @@ class UserController extends Controller
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'gender' => $request->gender,
+                'join_date' => $request->join_date,
                 'phone_number' => $request->phone_number,
                 'address' => $request->address,
                 'membership_status' => $request->membership_status,
@@ -64,7 +50,7 @@ class UserController extends Controller
             $user->assignRole($request->role);
 
             return redirect()
-                ->route('users.index')
+                ->route('usersList-student')
                 ->with('success', 'User created successfully.');
         } catch (\Throwable $th) {
             return back()->with('error', 'Terjadi kesalahan: ' . $th->getMessage());

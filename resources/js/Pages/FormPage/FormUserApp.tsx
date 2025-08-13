@@ -22,21 +22,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/Components/ui/form";
 import { Input, InputGroup } from "@/Components/ui/input";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
 import {
     Select,
     SelectContent,
@@ -45,14 +31,29 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { Textarea } from "@/Components/ui/textarea";
-import { cn } from "@/lib/utils";
 import { UseCreatedUsers } from "@/hooks/useForms";
 import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import toast from "react-hot-toast";
+import { usePage } from "@inertiajs/react";
+import { PageProps, Role } from "@/types";
 
-export default function UserForm() {
+
+export default function UserForm( {Roles}: {Roles: Role[]}) {
     const { data, setData, post, processing, errors, reset } =
-        UseCreatedUsers();
+        UseCreatedUsers({Roles});
+
+    const handleUserCreate = (e: React.FormEvent) => {
+        e.preventDefault();
+        post(route("user.store"), {
+            onSuccess: () => {
+                toast.success("User berhasil dibuat");
+            },
+            onError: (errors) => {
+                toast.error("Gagal membuat user:", errors);
+                reset();
+            },
+        });
+    };
 
     return (
         <Card className="w-full max-w-6xl mx-auto">
@@ -67,7 +68,7 @@ export default function UserForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form className="space-y-6">
+                <form onSubmit={handleUserCreate} className="space-y-6">
                     <Avatar className="h-32 w-32">
                         <AvatarImage
                             src={
@@ -168,7 +169,7 @@ export default function UserForm() {
                                 id="join_date"
                                 label="Tanggal Gabung"
                                 type="date"
-                                value={data.join_date}
+                                value={data.join_date ? new Date(data.join_date).toISOString().split('T')[0] : ""}
                                 onChange={(e) =>
                                     setData("join_date", e.target.value)
                                 }
@@ -203,7 +204,7 @@ export default function UserForm() {
                         </div>
                     </div>
 
-                    {/* Additional Information Section */}
+                    {/* General Information Section */}
                     <div className="space-y-4">
                         <h3 className="text-lg font-medium">
                             Gender Information
@@ -229,6 +230,63 @@ export default function UserForm() {
                                     </SelectItem>
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        <div className="">
+                            <label htmlFor="role">Divisi</label>
+                            <Select
+                                name="role"
+                                value={data.role}
+                                onValueChange={(value) =>
+                                    setData("role", value)
+                                }
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Pilih Divisi" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Roles.map((role) => (
+                                        <SelectItem
+                                            key={role.id}
+                                            value={role.name}
+                                        >
+                                            {role.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+
+                    {/* Additional Information Section */}
+                    <div className="space-y-4">
+                        <h3 className="text-lg font-medium">
+                            Password Information
+                        </h3>
+                        <div className="w-full flex flex-col gap-4">
+                            <InputGroup
+                                id="password"
+                                label="Password"
+                                type="password"
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
+                                error={errors.password}
+                                name="password"
+                            />
+
+                            <InputGroup
+                                id="password_confirmation"
+                                label="Konfirmasi Password"
+                                type="password"
+                                value={data.password_confirmation}
+                                onChange={(e) =>
+                                    setData("password_confirmation", e.target.value)
+                                }
+                                error={errors.password_confirmation}
+                                name="password_confirmation"
+                            />
                         </div>
                     </div>
 

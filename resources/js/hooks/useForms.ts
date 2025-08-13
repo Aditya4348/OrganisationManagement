@@ -1,4 +1,4 @@
-import { sharedData } from "@/types";
+import { Role, sharedData } from "@/types";
 import { useForm, usePage } from "@inertiajs/react";
 
 type FormData = {
@@ -10,6 +10,7 @@ type FormData = {
     join_date: string;
     membership_status: string;
     current_password: string;
+    role: string;
     password_confirmation: string;
     password: string;
     avatar?: string | File;
@@ -37,7 +38,7 @@ const UseProfileForm = () => {
     return form;
 };
 
-const UseCreatedUsers = () => {
+const UseCreatedUsers = ({Roles}: {Roles: Role[]}) => {
     
     const form = useForm<FormData>({
             name: "",
@@ -47,6 +48,7 @@ const UseCreatedUsers = () => {
             address: "",
             join_date: "",
             avatar: "",
+            role: Roles[0]?.id.toString() || "",
             avatar_preview: "",
             membership_status: "",
             current_password: "",
